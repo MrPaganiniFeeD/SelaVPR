@@ -84,8 +84,8 @@ class BaseDataset(data.Dataset):
         self.database_paths = sorted(glob(join(database_folder, "**", "*.jpg"), recursive=True))
         self.queries_paths  = sorted(glob(join(queries_folder, "**", "*.jpg"),  recursive=True))
         # The format must be path/to/file/@utm_easting@utm_northing@...@.jpg
-        self.database_utms = np.array([(path.split("@")[1], path.split("@")[2]) for path in self.database_paths]).astype(np.float)
-        self.queries_utms  = np.array([(path.split("@")[1], path.split("@")[2]) for path in self.queries_paths]).astype(np.float)
+        self.database_utms = np.array([(path.split("@")[1], path.split("@")[2]) for path in self.database_paths]).astype(float)
+        self.queries_utms  = np.array([(path.split("@")[1], path.split("@")[2]) for path in self.queries_paths]).astype(float)
         
         # Find soft_positives_per_query, which are within val_positive_dist_threshold (deafult 25 meters)
         knn = NearestNeighbors(n_jobs=-1)
@@ -190,7 +190,7 @@ class TripletsDataset(BaseDataset):
             logging.info(f"There are {len(queries_without_any_hard_positive)} queries without any positives " +
                          "within the training set. They won't be considered as they're useless for training.")
         # Remove queries without positives
-        self.hard_positives_per_query = np.delete(self.hard_positives_per_query, queries_without_any_hard_positive)
+        self.hard_positives_per_query = [hp for i, hp in enumerate(self.hard_positives_per_query) if i not in queries_without_any_hard_positive]
         self.queries_paths            = np.delete(self.queries_paths,            queries_without_any_hard_positive)
         
         # Recompute images_paths and queries_num because some queries might have been removed
