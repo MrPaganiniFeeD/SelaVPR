@@ -1,4 +1,3 @@
-
 import math
 import torch
 import logging
@@ -10,7 +9,7 @@ from os.path import join
 from datetime import datetime
 import torchvision.transforms as transforms
 from torch.utils.data.dataloader import DataLoader
-torch.backends.cudnn.benchmark= True  # Provides a speedup
+torch.backends.cudnn.benchmark = True  # Provides a speedup
 
 import util
 import test
@@ -23,7 +22,9 @@ warnings.filterwarnings('ignore')
 from loss import LocalFeatureLoss
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+# Удаляем фиксированное назначение GPU, чтобы можно было использовать все доступные
+# os.environ["CUDA_VISIBLE_DEVICES"] = "0"  # Закомментировали эту строку
+
 #### Initial setup: parser, logging...
 args = parser.parse_arguments()
 start_time = datetime.now()
@@ -33,7 +34,6 @@ commons.make_deterministic(args.seed)
 logging.info(f"Arguments: {args}")
 logging.info(f"The outputs are being saved in {args.save_dir}")
 logging.info(f"Using {torch.cuda.device_count()} GPUs and {multiprocessing.cpu_count()} CPUs")
-
 
 #### Creation of Datasets
 logging.debug(f"Loading dataset {args.dataset_name} from folder {args.datasets_folder}")
@@ -50,16 +50,21 @@ logging.info(f"Test set: {test_ds}")
 #### Initialize model
 model = network.GeoLocalizationNet(args)
 
+# Используем DataParallel если доступно несколько GPU
+if torch.cuda.device_count() > 1:
+    logging.info(f"Using {torch.cuda.device_count()} GPUs with DataParallel")
+    model = nn.DataParallel(model)
+
 model = model.to(args.device)
 
-model = torch.nn.DataParallel(model)
-
-for name, param in model.module.backbone.named_parameters():
+# Freeze backbone parameters except adapter
+for name, param in model.module.backbone.named_parameters() if hasattr(model, 'module') else model.backbone.named_parameters():
     if "adapter" not in name:
         param.requires_grad = False
 
-## initialize Adapter
-for n, m in model.named_modules():
+## Initialize Adapter
+model_to_initialize = model.module if hasattr(model, 'module') else model
+for n, m in model_to_initialize.named_modules():
     if 'adapter' in n:
         for n2, m2 in m.named_modules():
             if 'D_fc2' in n2:
@@ -70,7 +75,6 @@ for n, m in model.named_modules():
 ### Setup Optimizer and Loss
 if args.optim == "adam":
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
-    # scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=int(args.queries_per_epoch/args.train_batch_size), gamma=0.5, last_epoch=-1)
 elif args.optim == "sgd":
     optimizer = torch.optim.SGD(model.parameters(), lr=args.lr, momentum=0.9, weight_decay=0.001)
 
@@ -184,14 +188,16 @@ for epoch_num in range(start_epoch_num, args.epochs_num):
             logging.info(f"Performance did not improve for {not_improved_num} epochs. Stop training.")
             break
 
-
 logging.info(f"Best R@5: {best_r5:.1f}")
 logging.info(f"Trained for {epoch_num+1:02d} epochs, in total in {str(datetime.now() - start_time)[:-7]}")
 
 #### Test best model on test set
 best_model_state_dict = torch.load(join(args.save_dir, "best_model.pth"))["model_state_dict"]
+
+# Handle DataParallel wrapping when loading model
+if torch.cuda.device_count() > 1:
+    model = nn.DataParallel(model)
 model.load_state_dict(best_model_state_dict)
 
 recalls, recalls_str = test.test(args, test_ds, model, test_method=args.test_method)
 logging.info(f"Recalls on {test_ds}: {recalls_str}")
-
