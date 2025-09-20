@@ -359,7 +359,8 @@ class TripletsDataset(BaseDataset):
         self.triplets_global_indexes = []
         # Take 1000 random queries
         if self.mining == "partial":
-            sampled_queries_indexes = np.random.choice(self.queries_num, args.cache_refresh_rate, replace=False)
+            sample_size = min(args.cache_refresh_rate, self.queries_num)
+            sampled_queries_indexes = np.random.choice(self.queries_num, sample_size, replace=False)
         elif self.mining == "msls_weighted":  # Pick night and sideways queries with higher probability
             sampled_queries_indexes = np.random.choice(self.queries_num, args.cache_refresh_rate, replace=False, p=self.weights)
         
