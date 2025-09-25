@@ -3,3 +3,5 @@ venv/
 datasets_vg/
 logs_pitts30k_test/
 models/
+outputs/
+test/
