@@ -1,5 +1,7 @@
 # SelaVPR
 Start in `start_train.ipynb`
+
+
 This is the official repository for the ICLR 2024 paper "[Towards Seamless Adaptation of Pre-trained Models for Visual Place Recognition](https://openreview.net/pdf?id=TVg6hlfsKa)".
 
 <img src="image/architecture.png" width="800px">
