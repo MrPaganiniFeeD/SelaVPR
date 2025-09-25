@@ -34,8 +34,8 @@ model = model.to(args.device)
 model = torch.nn.DataParallel(model)
 
 if args.resume != None:
-    state_dict = torch.load(args.resume)["model_state_dict"]
-    model.load_state_dict(state_dict)
+    #state_dict = torch.load(args.resume)["model_state_dict"]
+    #model.load_state_dict(state_dict)
     state_dict = torch.load(args.resume, weights_only=False)["model_state_dict"]
 
     # Если модель была сохранена с DataParallel, оборачиваем текущую модель
