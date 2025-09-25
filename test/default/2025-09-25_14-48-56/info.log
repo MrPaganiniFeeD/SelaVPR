@@ -1,0 +1,27 @@
+2025-09-25 14:48:56   Arguments: Namespace(train_batch_size=4, infer_batch_size=16, criterion='triplet', margin=0.1, epochs_num=50, patience=3, lr=1e-05, optim='adam', cache_refresh_rate=1000, queries_per_epoch=5000, negs_num_per_query=2, neg_samples_num=1000, mining='partial', l2='before_pool', pca_dim=None, registers=False, seed=0, foundation_model_path=None, resume='rC:\\Users\\顯闉\\Downloads\\SelaVPR_pitts30k.pth', device='cuda', num_workers=8, resize=[224, 224], dense_feature_map_size=[61, 61, 128], test_method='hard_resize', majority_weight=0.01, efficient_ram_testing=False, val_positive_dist_threshold=25, train_positives_dist_threshold=10, recall_values=[1, 5, 10, 20], rerank_num=100, brightness=None, contrast=None, saturation=None, hue=None, rand_perspective=None, horizontal_flip=False, random_resized_crop=None, random_rotation=None, datasets_folder='rC:\\Users\\顯闉\\VsCode project\\SelaVPR\\datasets_vg', dataset_name='pitts30k', pca_dataset_folder=None, save_dir='test\\default\\2025-09-25_14-48-56')
+2025-09-25 14:48:56   The outputs are being saved in test\default\2025-09-25_14-48-56
+2025-09-25 14:48:56   using MLP layer as FFN
+2025-09-25 14:49:01   
+Traceback (most recent call last):
+  File "c:\Users\顯闉\VsCode project\SelaVPR\eval.py", line 31, in <module>
+    model = model.to(args.device)
+            ^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\顯闉\VsCode project\SelaVPR\venv\Lib\site-packages\torch\nn\modules\module.py", line 1152, in to
+    return self._apply(convert)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\顯闉\VsCode project\SelaVPR\venv\Lib\site-packages\torch\nn\modules\module.py", line 802, in _apply
+    module._apply(fn)
+  File "c:\Users\顯闉\VsCode project\SelaVPR\venv\Lib\site-packages\torch\nn\modules\module.py", line 802, in _apply
+    module._apply(fn)
+  File "c:\Users\顯闉\VsCode project\SelaVPR\venv\Lib\site-packages\torch\nn\modules\module.py", line 802, in _apply
+    module._apply(fn)
+  File "c:\Users\顯闉\VsCode project\SelaVPR\venv\Lib\site-packages\torch\nn\modules\module.py", line 825, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "c:\Users\顯闉\VsCode project\SelaVPR\venv\Lib\site-packages\torch\nn\modules\module.py", line 1150, in convert
+    return t.to(device, dtype if t.is_floating_point() or t.is_complex() else None, non_blocking)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\顯闉\VsCode project\SelaVPR\venv\Lib\site-packages\torch\cuda\__init__.py", line 302, in _lazy_init
+    torch._C._cuda_init()
+RuntimeError: Found no NVIDIA driver on your system. Please check that you have an NVIDIA GPU and installed a driver from http://www.nvidia.com/Download/index.aspx
+

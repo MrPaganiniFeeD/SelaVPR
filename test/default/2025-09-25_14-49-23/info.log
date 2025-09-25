@@ -1,0 +1,19 @@
+2025-09-25 14:49:23   Arguments: Namespace(train_batch_size=4, infer_batch_size=16, criterion='triplet', margin=0.1, epochs_num=50, patience=3, lr=1e-05, optim='adam', cache_refresh_rate=1000, queries_per_epoch=5000, negs_num_per_query=2, neg_samples_num=1000, mining='partial', l2='before_pool', pca_dim=None, registers=False, seed=0, foundation_model_path=None, resume='rC:\\Users\\顯闉\\Downloads\\SelaVPR_pitts30k.pth', device='cpu', num_workers=8, resize=[224, 224], dense_feature_map_size=[61, 61, 128], test_method='hard_resize', majority_weight=0.01, efficient_ram_testing=False, val_positive_dist_threshold=25, train_positives_dist_threshold=10, recall_values=[1, 5, 10, 20], rerank_num=10, brightness=None, contrast=None, saturation=None, hue=None, rand_perspective=None, horizontal_flip=False, random_resized_crop=None, random_rotation=None, datasets_folder='rC:\\Users\\顯闉\\VsCode project\\SelaVPR\\datasets_vg', dataset_name='pitts30k', pca_dataset_folder=None, save_dir='test\\default\\2025-09-25_14-49-23')
+2025-09-25 14:49:23   The outputs are being saved in test\default\2025-09-25_14-49-23
+2025-09-25 14:49:23   using MLP layer as FFN
+2025-09-25 14:49:26   
+Traceback (most recent call last):
+  File "c:\Users\顯闉\VsCode project\SelaVPR\eval.py", line 37, in <module>
+    state_dict = torch.load(args.resume, weights_only=False)["model_state_dict"]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\顯闉\VsCode project\SelaVPR\venv\Lib\site-packages\torch\serialization.py", line 998, in load
+    with _open_file_like(f, 'rb') as opened_file:
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\顯闉\VsCode project\SelaVPR\venv\Lib\site-packages\torch\serialization.py", line 445, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\顯闉\VsCode project\SelaVPR\venv\Lib\site-packages\torch\serialization.py", line 426, in __init__
+    super().__init__(open(name, mode))
+                     ^^^^^^^^^^^^^^^^
+OSError: [Errno 22] Invalid argument: 'rC:\\Users\\顯闉\\Downloads\\SelaVPR_pitts30k.pth'
+

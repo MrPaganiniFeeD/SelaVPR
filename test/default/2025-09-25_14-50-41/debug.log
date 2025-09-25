@@ -1,0 +1,30 @@
+2025-09-25 14:50:41   Arguments: Namespace(train_batch_size=4, infer_batch_size=16, criterion='triplet', margin=0.1, epochs_num=50, patience=3, lr=1e-05, optim='adam', cache_refresh_rate=1000, queries_per_epoch=5000, negs_num_per_query=2, neg_samples_num=1000, mining='partial', l2='before_pool', pca_dim=None, registers=False, seed=0, foundation_model_path=None, resume='models/SelaVPR_pitts30k.pth', device='cpu', num_workers=8, resize=[224, 224], dense_feature_map_size=[61, 61, 128], test_method='hard_resize', majority_weight=0.01, efficient_ram_testing=False, val_positive_dist_threshold=25, train_positives_dist_threshold=10, recall_values=[1, 5, 10, 20], rerank_num=10, brightness=None, contrast=None, saturation=None, hue=None, rand_perspective=None, horizontal_flip=False, random_resized_crop=None, random_rotation=None, datasets_folder='datasets_vg', dataset_name='pitts30k', pca_dataset_folder=None, save_dir='test\\default\\2025-09-25_14-50-41')
+2025-09-25 14:50:41   The outputs are being saved in test\default\2025-09-25_14-50-41
+2025-09-25 14:50:41   using MLP layer as FFN
+2025-09-25 14:50:44   
+Traceback (most recent call last):
+  File "c:\Users\顯闉\VsCode project\SelaVPR\eval.py", line 37, in <module>
+    state_dict = torch.load(args.resume, weights_only=False)["model_state_dict"]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\顯闉\VsCode project\SelaVPR\venv\Lib\site-packages\torch\serialization.py", line 1026, in load
+    return _load(opened_zipfile,
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\顯闉\VsCode project\SelaVPR\venv\Lib\site-packages\torch\serialization.py", line 1438, in _load
+    result = unpickler.load()
+             ^^^^^^^^^^^^^^^^
+  File "c:\Users\顯闉\VsCode project\SelaVPR\venv\Lib\site-packages\torch\serialization.py", line 1408, in persistent_load
+    typed_storage = load_tensor(dtype, nbytes, key, _maybe_decode_ascii(location))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\顯闉\VsCode project\SelaVPR\venv\Lib\site-packages\torch\serialization.py", line 1382, in load_tensor
+    wrap_storage=restore_location(storage, location),
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\顯闉\VsCode project\SelaVPR\venv\Lib\site-packages\torch\serialization.py", line 391, in default_restore_location
+    result = fn(storage, location)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\顯闉\VsCode project\SelaVPR\venv\Lib\site-packages\torch\serialization.py", line 266, in _cuda_deserialize
+    device = validate_cuda_device(location)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\顯闉\VsCode project\SelaVPR\venv\Lib\site-packages\torch\serialization.py", line 250, in validate_cuda_device
+    raise RuntimeError('Attempting to deserialize object on a CUDA '
+RuntimeError: Attempting to deserialize object on a CUDA device but torch.cuda.is_available() is False. If you are running on a CPU-only machine, please use torch.load with map_location=torch.device('cpu') to map your storages to the CPU.
+
