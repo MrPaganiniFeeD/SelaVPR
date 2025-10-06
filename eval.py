@@ -28,7 +28,7 @@ logging.info(f"The outputs are being saved in {args.save_dir}")
 
 ######################################### MODEL #########################################
 model = network.GeoLocalizationNet(args)
-model = model.to("gpu")
+model = model.to(args.device)
 model = torch.nn.DataParallel(model)
 
 if args.resume != None:
