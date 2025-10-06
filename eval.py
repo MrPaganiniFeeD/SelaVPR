@@ -15,7 +15,7 @@ import network
 import warnings
 warnings.filterwarnings('ignore')
 
-os.environ["CUDA_VISIBLE_DEVICES"] = ""
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 ######################################### SETUP #########################################
 args = parser.parse_arguments()
@@ -28,7 +28,7 @@ logging.info(f"The outputs are being saved in {args.save_dir}")
 
 ######################################### MODEL #########################################
 model = network.GeoLocalizationNet(args)
-model = model.to("cpu")
+model = model.to("gpu")
 model = torch.nn.DataParallel(model)
 
 if args.resume != None:
