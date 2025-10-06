@@ -28,13 +28,13 @@ logging.info(f"The outputs are being saved in {args.save_dir}")
 
 ######################################### MODEL #########################################
 model = network.GeoLocalizationNet(args)
-model = model.to(args.device)
+model = model.to("cpu")
 model = torch.nn.DataParallel(model)
 
 if args.resume != None:
     #state_dict = torch.load(args.resume)["model_state_dict"]
     #model.load_state_dict(state_dict)
-    state_dict = torch.load(args.resume)["model_state_dict"]
+    state_dict = torch.load(args.resume, map_location='cpu')["model_state_dict"]
 
     # Если модель была сохранена с DataParallel, оборачиваем текущую модель
     if not isinstance(model, torch.nn.DataParallel):

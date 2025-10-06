@@ -12,6 +12,25 @@ import datetime
 import os
 from os.path import join
 from local_matching import local_sim
+from PIL import Image
+import shutil
+
+def save_top5_images(eval_ds, predictions, save_dir="top5_results"):
+    os.makedirs(save_dir, exist_ok=True)
+    for q_idx, preds in enumerate(predictions):
+        query_img_path = eval_ds.queries_paths[q_idx]
+        query_name = os.path.splitext(os.path.basename(query_img_path))[0]
+        query_save_dir = os.path.join(save_dir, f"query_{q_idx}_{query_name}")
+        os.makedirs(query_save_dir, exist_ok=True)
+
+        # Сохраняем сам запрос
+        shutil.copy(query_img_path, os.path.join(query_save_dir, "query.jpg"))
+
+        # Сохраняем 5 наиболее похожих изображений
+        for rank, db_idx in enumerate(preds[:5]):
+            db_img_path = eval_ds.database_paths[db_idx]
+            save_path = os.path.join(query_save_dir, f"top{rank+1}.jpg")
+            shutil.copy(db_img_path, save_path)
 
 
 def test(args, eval_ds, model, test_method="hard_resize", pca=None):
@@ -99,6 +118,8 @@ def test(args, eval_ds, model, test_method="hard_resize", pca=None):
     logging.info(f"First ranking recalls: {recalls_str}")
 
     predictions = rerank(predictions,queries_local_features,database_local_features)
+
+    save_top5_images(eval_ds, predictions)
 
     #### For each query, check if the predictions are correct
     positives_per_query = eval_ds.get_positives()
