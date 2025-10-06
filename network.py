@@ -82,7 +82,8 @@ def get_backbone(args):
     if args.foundation_model_path:
         model_dict = backbone.state_dict()
         torch.serialization.add_safe_globals([np.core.multiarray._reconstruct])
-        state_dict = torch.load(args.foundation_model_path, weights_only=False)        model_dict.update(state_dict.items())
+        state_dict = torch.load(args.foundation_model_path, weights_only=False)        
+        model_dict.update(state_dict.items())
         backbone.load_state_dict(model_dict)
     args.features_dim = 1024
     return backbone
