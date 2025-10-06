@@ -4,6 +4,7 @@ from torch import nn
 from torch.nn.parameter import Parameter
 import torch.nn.functional as F
 from backbone.vision_transformer import vit_small, vit_base, vit_large, vit_giant2
+import torch.serialization
 
 class GeM(nn.Module):
     def __init__(self, p=3, eps=1e-6, work_with_tokens=False):
@@ -80,8 +81,8 @@ def get_backbone(args):
     assert not (args.foundation_model_path is None and args.resume is None), "Please specify foundation model path."
     if args.foundation_model_path:
         model_dict = backbone.state_dict()
-        state_dict = torch.load(args.foundation_model_path)
-        model_dict.update(state_dict.items())
+        torch.serialization.add_safe_globals([np.core.multiarray._reconstruct])
+        state_dict = torch.load(args.foundation_model_path, weights_only=False)        model_dict.update(state_dict.items())
         backbone.load_state_dict(model_dict)
     args.features_dim = 1024
     return backbone
