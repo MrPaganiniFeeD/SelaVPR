@@ -14,6 +14,7 @@ from os.path import join
 from local_matching import local_sim
 from PIL import Image
 import shutil
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
 def save_top5_images(eval_ds, predictions, save_dir="top5_results"):
     os.makedirs(save_dir, exist_ok=True)

@@ -15,7 +15,7 @@ import network
 import warnings
 warnings.filterwarnings('ignore')
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
 ######################################### SETUP #########################################
 args = parser.parse_arguments()
@@ -34,7 +34,7 @@ model = torch.nn.DataParallel(model)
 if args.resume != None:
     #state_dict = torch.load(args.resume)["model_state_dict"]
     #model.load_state_dict(state_dict)
-    state_dict = torch.load(args.resume, map_location='cpu')["model_state_dict"]
+    state_dict = torch.load(args.resume, weights_only='False')["model_state_dict"]
 
     # Если модель была сохранена с DataParallel, оборачиваем текущую модель
     if not isinstance(model, torch.nn.DataParallel):
