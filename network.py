@@ -76,15 +76,72 @@ class GeoLocalizationNet(nn.Module):
 
 def get_backbone(args):
     if args.registers:
-        backbone = vit_large(patch_size=14,img_size=518,init_values=1,block_chunks=0, num_register_tokens=4)
+        backbone = vit_large(patch_size=14, img_size=518, init_values=1, block_chunks=0, num_register_tokens=4)
     else:
-        backbone = vit_large(patch_size=14,img_size=518,init_values=1,block_chunks=0) 
+        backbone = vit_large(patch_size=14, img_size=518, init_values=1, block_chunks=0) 
+    
     assert not (args.foundation_model_path is None and args.resume is None), "Please specify foundation model path."
+    
     if args.foundation_model_path:
-        model_dict = backbone.state_dict()
+        # Загружаем checkpoint
         torch.serialization.add_safe_globals([np.core.multiarray._reconstruct])
-        state_dict = torch.load(args.foundation_model_path, weights_only=False)        
-        model_dict.update(state_dict.items())
-        backbone.load_state_dict(model_dict)
+        checkpoint = torch.load(args.foundation_model_path, weights_only=False)
+        
+        print(f"Checkpoint keys: {list(checkpoint.keys())}")
+        
+        # Извлекаем только веса модели из checkpoint
+        if 'model_state_dict' in checkpoint:
+            state_dict = checkpoint['model_state_dict']
+            print("Using 'model_state_dict' from checkpoint")
+        elif 'state_dict' in checkpoint:
+            state_dict = checkpoint['state_dict']
+            print("Using 'state_dict' from checkpoint")
+        elif 'model' in checkpoint:
+            state_dict = checkpoint['model']
+            print("Using 'model' from checkpoint")
+        else:
+            # Если это уже чистые веса, а не checkpoint
+            state_dict = checkpoint
+            print("Using entire checkpoint as state_dict")
+        
+        # Удаляем префиксы если они есть (например, "module.", "backbone.")
+        cleaned_state_dict = {}
+        for k, v in state_dict.items():
+            # Удаляем common prefixes
+            new_key = k
+            if k.startswith('module.'):
+                new_key = k[7:]  # удаляем "module."
+            elif k.startswith('backbone.'):
+                new_key = k[9:]  # удаляем "backbone."
+            elif k.startswith('encoder.'):
+                new_key = k[8:]  # удаляем "encoder."
+            
+            # Пропускаем ключи, которые не являются весами модели
+            if any(skip_key in new_key for skip_key in ['epoch_num', 'optimizer', 'best_r5', 'recalls', 'not_improved_num']):
+                continue
+                
+            cleaned_state_dict[new_key] = v
+        
+        print(f"Loading {len(cleaned_state_dict)} parameters into backbone")
+        print(f"First few keys: {list(cleaned_state_dict.keys())[:5]}")
+        
+        # Загружаем веса в backbone
+        model_dict = backbone.state_dict()
+        
+        # Фильтруем state_dict чтобы оставить только те ключи, которые есть в модели
+        pretrained_dict = {k: v for k, v in cleaned_state_dict.items() 
+                          if k in model_dict and v.size() == model_dict[k].size()}
+        
+        print(f"Matched keys: {len(pretrained_dict)}/{len(model_dict)}")
+        
+        if len(pretrained_dict) == 0:
+            print("Warning: No weights were loaded! Check key names.")
+            print(f"Model keys sample: {list(model_dict.keys())[:5]}")
+            print(f"State dict keys sample: {list(cleaned_state_dict.keys())[:5]}")
+        else:
+            model_dict.update(pretrained_dict)
+            backbone.load_state_dict(model_dict)
+            print("Successfully loaded pretrained weights!")
+    
     args.features_dim = 1024
     return backbone
