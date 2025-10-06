@@ -5,6 +5,7 @@ from torch.nn.parameter import Parameter
 import torch.nn.functional as F
 from backbone.vision_transformer import vit_small, vit_base, vit_large, vit_giant2
 import torch.serialization
+import numpy as np
 
 class GeM(nn.Module):
     def __init__(self, p=3, eps=1e-6, work_with_tokens=False):
